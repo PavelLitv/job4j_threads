@@ -22,7 +22,7 @@ public class ParallelGetIndex<T> extends RecursiveTask<Integer> {
     protected Integer compute() {
         if (to - from < SIZE_MIN) {
             int result = -1;
-            for (int i = from; i <= to; i++) {
+            for (int i = from; i < to; i++) {
                 if (Objects.equals(array[i], value)) {
                     result = i;
                     break;
