@@ -21,14 +21,7 @@ public class ParallelGetIndex<T> extends RecursiveTask<Integer> {
     @Override
     protected Integer compute() {
         if (to - from < SIZE_MIN) {
-            int result = -1;
-            for (int i = from; i < to; i++) {
-                if (Objects.equals(array[i], value)) {
-                    result = i;
-                    break;
-                }
-            }
-            return result;
+            return findIndexInRange();
         }
         int middle = (from + to) / 2;
         ParallelGetIndex<T> left = new ParallelGetIndex<>(array, from, middle, value);
@@ -40,8 +33,19 @@ public class ParallelGetIndex<T> extends RecursiveTask<Integer> {
         return leftIndex != -1 ? leftIndex : rightIndex;
     }
 
-    public int getIndex() {
+    public static <T> int getIndex(T[] array, T item) {
         ForkJoinPool pool = new ForkJoinPool();
-        return pool.invoke(this);
+        return pool.invoke(new ParallelGetIndex<>(array, 0, array.length, item));
+    }
+
+    private int findIndexInRange() {
+        int result = -1;
+        for (int i = from; i < to; i++) {
+            if (Objects.equals(array[i], value)) {
+                result = i;
+                break;
+            }
+        }
+        return result;
     }
 }
